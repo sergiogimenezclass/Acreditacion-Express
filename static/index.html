@@ -1,95 +1,149 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="light" lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
     <title>Registro - Noche de los Oficios</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #faf8ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .scan-focus { position: relative; }
+        .scan-focus::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 20px; height: 20px;
+            border-top: 3px solid #2563eb; border-left: 3px solid #2563eb; border-radius: 4px 0 0 0;
+        }
+        .scan-focus::after {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 20px; height: 20px;
+            border-bottom: 3px solid #2563eb; border-right: 3px solid #2563eb; border-radius: 0 0 4px 0;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-600 to-indigo-900 min-h-screen flex items-center justify-center p-4">
-    
-    <div class="glass w-full max-w-md rounded-2xl shadow-2xl p-8">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">¡Bienvenido! 🚀</h1>
-            <p class="text-gray-600 mt-2">Registrate en menos de 20 segundos</p>
+<body class="bg-[#faf8ff] min-h-screen flex flex-col">
+    <header class="bg-white flex items-center justify-between px-4 md:px-6 h-16 w-full shadow-sm sticky top-0 z-50">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-blue-600">school</span>
+            <h1 class="text-lg font-bold text-blue-600 tracking-tight">Registro de Asistentes</h1>
         </div>
+        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+            <i data-lucide="user" class="w-5 h-5"></i>
+        </div>
+    </header>
 
-        <form id="registroForm" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Nombre Completo</label>
-                <input type="text" name="nombre" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-white/50 border">
+    <main class="flex-grow container mx-auto max-w-lg px-4 py-6">
+        <form id="registroForm">
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                <div class="p-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <i class="text-blue-600 w-5 h-5" data-lucide="user-plus"></i>
+                        <h2 class="text-xl font-bold text-gray-900">Datos Personales</h2>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-semibold text-gray-600 block mb-1">Nombre Completo</label>
+                            <input name="nombre" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all text-gray-900" placeholder="Ej: Juan Pérez" type="text"/>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-gray-600 block mb-1">Correo Electrónico</label>
+                            <input name="email" required class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all text-gray-900" placeholder="juan.perez@ejemplo.com" type="email"/>
+                        </div>
+                        <div>
+                            <label class="text-sm font-semibold text-gray-600 block mb-1">Teléfono (Opcional)</label>
+                            <input name="telefono" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all text-gray-900" placeholder="Ej: 11 2233 4455" type="tel"/>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Email</label>
-                <input type="email" name="email" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-white/50 border">
-            </div>
+            <section class="mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="text-blue-600 w-5 h-5" data-lucide="map-pin"></i>
+                    <h2 class="text-xl font-bold text-gray-900">¿Qué CFP visitás?</h2>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="cfp" value="CFP N°11" class="hidden peer" required>
+                        <div class="p-4 bg-white border border-gray-200 rounded-xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all">
+                            <p class="font-bold text-gray-900">CFP N°11</p>
+                            <p class="text-xs text-gray-500">Pque. Patricios</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="cfp" value="CFP N°27" class="hidden peer">
+                        <div class="p-4 bg-white border border-gray-200 rounded-xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all">
+                            <p class="font-bold text-gray-900">CFP N°27</p>
+                            <p class="text-xs text-gray-500">CABA</p>
+                        </div>
+                    </label>
+                </div>
+            </section>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Teléfono (Opcional)</label>
-                <input type="tel" name="telefono" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-white/50 border">
-            </div>
+            <section id="cursoSection" class="mb-8 hidden">
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="text-blue-600 w-5 h-5" data-lucide="book-open"></i>
+                    <h2 class="text-xl font-bold text-gray-900">Curso de interés</h2>
+                </div>
+                <div class="space-y-2" id="courseList">
+                    <!-- Dinámico -->
+                </div>
+            </section>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">¿Qué CFP visitás?</label>
-                <select id="cfpSelect" name="cfp" required class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-white/50 border">
-                    <option value="">Seleccioná un CFP</option>
-                    <option value="CFP N°11">CFP N°11 (Parque Patricios)</option>
-                    <option value="CFP N°27">CFP N°27 (CABA)</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Curso de interés</label>
-                <select id="cursoSelect" name="curso" required disabled class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 bg-gray-100/50 border cursor-not-allowed">
-                    <option value="">Primero elegí el CFP</option>
-                </select>
-            </div>
-
-            <button type="submit" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition duration-300 shadow-lg mt-4">
-                ¡Registrarme Ahora!
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all duration-200 mb-20 flex items-center justify-center gap-2">
+                <i class="w-6 h-6" data-lucide="check-circle"></i>
+                Registrarme Ahora
             </button>
         </form>
 
-        <div id="mensajeExito" class="hidden text-center py-8">
-            <div class="text-5xl mb-4">🎉</div>
-            <h2 class="text-2xl font-bold text-gray-800">¡Listo!</h2>
-            <p class="text-gray-600 mt-2">Mirá la pantalla del stand, te están saludando.</p>
-            <button onclick="location.reload()" class="mt-6 text-indigo-600 font-semibold underline">Registrar a otra persona</button>
+        <div id="mensajeExito" class="hidden text-center py-12">
+            <div class="text-6xl mb-4">🎉</div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">¡Listo!</h2>
+            <p class="text-gray-600 text-lg">Mirá la pantalla del stand, te están saludando.</p>
+            <button onclick="location.reload()" class="mt-8 text-blue-600 font-bold underline">Registrar a otra persona</button>
         </div>
-    </div>
+    </main>
 
     <script>
-        const cursos = {
+        lucide.createIcons();
+
+        const cursosMap = {
             "CFP N°11": ["Programación Web", "Diseño Web", "Diseño Gráfico", "Marketing Digital"],
             "CFP N°27": ["Programación", "Programación con IA", "Productividad con IA", "Marketing Digital"]
         };
 
-        const cfpSelect = document.getElementById('cfpSelect');
-        const cursoSelect = document.getElementById('cursoSelect');
         const form = document.getElementById('registroForm');
+        const courseList = document.getElementById('courseList');
+        const cursoSection = document.getElementById('cursoSection');
         const mensajeExito = document.getElementById('mensajeExito');
 
-        cfpSelect.addEventListener('change', (e) => {
-            const selectedCFP = e.target.value;
-            cursoSelect.innerHTML = '<option value="">Seleccioná un curso</option>';
-            
-            if (selectedCFP) {
-                cursos[selectedCFP].forEach(curso => {
-                    const option = document.createElement('option');
-                    option.value = curso;
-                    option.textContent = curso;
-                    cursoSelect.appendChild(option);
+        document.querySelectorAll('input[name="cfp"]').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const selectedCFP = e.target.value;
+                courseList.innerHTML = '';
+                
+                cursosMap[selectedCFP].forEach(curso => {
+                    const item = `
+                        <label class="flex items-center bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm peer">
+                            <input class="hidden peer" name="curso" type="radio" value="${curso}" required/>
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
+                                <i class="text-blue-600 w-6 h-6" data-lucide="star"></i>
+                            </div>
+                            <div class="flex-grow">
+                                <p class="font-bold text-gray-900">${curso}</p>
+                            </div>
+                            <div class="w-6 h-6 rounded-full border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-600 flex items-center justify-center transition-all">
+                                <div class="w-2.5 h-2.5 rounded-full bg-white opacity-0 peer-checked:opacity-100"></div>
+                            </div>
+                        </label>
+                    `;
+                    courseList.innerHTML += item;
                 });
-                cursoSelect.disabled = false;
-                cursoSelect.classList.remove('bg-gray-100/50', 'cursor-not-allowed');
-            } else {
-                cursoSelect.disabled = true;
-                cursoSelect.classList.add('bg-gray-100/50', 'cursor-not-allowed');
-            }
+                
+                cursoSection.classList.remove('hidden');
+                lucide.createIcons();
+            });
         });
 
         form.addEventListener('submit', async (e) => {
@@ -110,7 +164,7 @@
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Falla de conexión. Avisale al encargado del stand.');
+                alert('Falla de conexión.');
             }
         });
     </script>
