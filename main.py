@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from sqlalchemy import create_all_metadata, create_engine, Column, Integer, String, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
@@ -38,8 +38,12 @@ class ConnectionManager:
         self.active_connections.remove(websocket)
 
     async def broadcast(self, message: str):
+        print(f"DEBUG: Enviando mensaje a {len(self.active_connections)} pantallas conectadas.")
         for connection in self.active_connections:
-            await connection.send_text(message)
+            try:
+                await connection.send_text(message)
+            except Exception as e:
+                print(f"ERROR: No se pudo enviar mensaje a una conexión: {e}")
 
 manager = ConnectionManager()
 
@@ -62,6 +66,7 @@ async def registro(
     cfp: str = Form(...),
     curso: str = Form(...)
 ):
+    print(f"DEBUG: Nuevo registro recibido: {nombre} para {curso}")
     db = SessionLocal()
     nuevo_lead = Lead(nombre=nombre, email=email, telefono=telefono, cfp=cfp, curso=curso)
     db.add(nuevo_lead)
@@ -89,11 +94,13 @@ async def listar_leads():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
+    print(f"DEBUG: Nueva pantalla conectada. Total: {len(manager.active_connections)}")
     try:
         while True:
-            await websocket.receive_text() # Mantener conexión viva
+            await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+        print(f"DEBUG: Pantalla desconectada. Total: {len(manager.active_connections)}")
 
 if __name__ == "__main__":
     import uvicorn
