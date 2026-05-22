@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pantalla Stand - Noche de los Oficios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes pulse-custom {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-custom { animation: pulse-custom 3s infinite; }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center justify-center overflow-hidden">
+    
+    <div id="idleState" class="text-center transition-opacity duration-1000">
+        <h1 class="text-6xl font-black mb-8 animate-pulse-custom">
+            ¡SUMATE A LA <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">EXPERIENCIA!</span>
+        </h1>
+        <p class="text-3xl text-gray-400">Escaneá el QR y registrate para más info</p>
+        <div class="mt-12 text-8xl">📱✨</div>
+    </div>
+
+    <div id="welcomeState" class="hidden text-center scale-150 transition-all duration-500">
+        <h2 class="text-4xl font-bold text-blue-400 mb-4">¡BIENVENIDO/A!</h2>
+        <h1 id="userName" class="text-8xl font-black text-white mb-6 uppercase tracking-tighter">NOMBRE</h1>
+        <p id="userCourse" class="text-3xl text-yellow-500 font-semibold">CURSO ELEGIDO</p>
+    </div>
+
+    <script>
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);
+        
+        const idleState = document.getElementById('idleState');
+        const welcomeState = document.getElementById('welcomeState');
+        const userName = document.getElementById('userName');
+        const userCourse = document.getElementById('userCourse');
+
+        socket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            if (data.tipo === 'NUEVO_REGISTRO') {
+                showGreeting(data.nombre, data.curso);
+            }
+        };
+
+        function showGreeting(name, course) {
+            userName.textContent = name;
+            userCourse.textContent = course;
+            
+            idleState.classList.add('opacity-0', 'scale-50');
+            setTimeout(() => {
+                idleState.classList.add('hidden');
+                welcomeState.classList.remove('hidden');
+                welcomeState.classList.add('flex', 'flex-col');
+                
+                // Tirar confeti
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#3B82F6', '#F59E0B', '#10B981']
+                });
+            }, 500);
+
+            // Volver al estado idle después de 8 segundos
+            setTimeout(() => {
+                welcomeState.classList.add('hidden');
+                idleState.classList.remove('hidden');
+                setTimeout(() => {
+                    idleState.classList.remove('opacity-0', 'scale-50');
+                }, 50);
+            }, 8000);
+        }
+
+        // Reconectar si se cae
+        socket.onclose = function() {
+            setTimeout(() => location.reload(), 3000);
+        };
+    </script>
+</body>
+</html>
