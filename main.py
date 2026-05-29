@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from typing import List
 import datetime
 import json
 
@@ -20,7 +21,7 @@ class Lead(Base):
     email = Column(String)
     telefono = Column(String)
     cfp = Column(String)
-    curso = Column(String)
+    curso = Column(String) # Guardaremos los cursos como un string separado por comas
     fecha = Column(DateTime, default=datetime.datetime.utcnow)
 
 Base.metadata.create_all(bind=engine)
@@ -64,11 +65,12 @@ async def registro(
     email: str = Form(...),
     telefono: str = Form(""),
     cfp: str = Form(...),
-    curso: str = Form(...)
+    curso: List[str] = Form(...)
 ):
-    print(f"DEBUG: Nuevo registro recibido: {nombre} para {curso}")
+    cursos_str = ", ".join(curso)
+    print(f"DEBUG: Nuevo registro recibido: {nombre} para {cursos_str}")
     db = SessionLocal()
-    nuevo_lead = Lead(nombre=nombre, email=email, telefono=telefono, cfp=cfp, curso=curso)
+    nuevo_lead = Lead(nombre=nombre, email=email, telefono=telefono, cfp=cfp, curso=cursos_str)
     db.add(nuevo_lead)
     db.commit()
     db.refresh(nuevo_lead)
@@ -78,7 +80,7 @@ async def registro(
     mensaje = json.dumps({
         "tipo": "NUEVO_REGISTRO",
         "nombre": nombre,
-        "curso": curso
+        "curso": cursos_str
     })
     await manager.broadcast(mensaje)
     
