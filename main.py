@@ -80,7 +80,8 @@ async def registro(
     mensaje = json.dumps({
         "tipo": "NUEVO_REGISTRO",
         "nombre": nombre,
-        "curso": cursos_str
+        "curso": cursos_str,
+        "cfp": cfp
     })
     await manager.broadcast(mensaje)
     

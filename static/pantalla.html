@@ -89,14 +89,15 @@
         socket.onmessage = function(event) {
             const data = JSON.parse(event.data);
             if (data.tipo === 'NUEVO_REGISTRO') {
-                showGreeting(data.nombre, data.curso);
+                showGreeting(data.nombre, data.curso, data.cfp);
             }
         };
 
-        function showGreeting(name, course) {
+        function showGreeting(name, course, cfp) {
             welcomeText.innerText = `¡Hola ${name}! 👋`;
             const isPlural = course.includes(',');
-            courseText.innerText = `${isPlural ? 'Interesado/a en los cursos:' : 'Interesado/a en el curso:'} ${course}`;
+            const cfpText = cfp ? ` (${cfp})` : '';
+            courseText.innerText = `${isPlural ? 'Interesado/a en los cursos:' : 'Interesado/a en el curso:'} ${course}${cfpText}`;
 
             homeView.classList.add('opacity-0', 'scale-95');
             setTimeout(() => {
