@@ -115,9 +115,22 @@
     </style>
 
     <script>
-        // Generar QR dinámico
-        const registerUrl = window.location.origin;
-        document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(registerUrl)}`;
+        // Obtener configuración del servidor y generar QR
+        async function initConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+                const registerUrl = config.base_url;
+                document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(registerUrl)}`;
+                console.log('QR generado para:', registerUrl);
+            } catch (error) {
+                console.error('Error cargando config:', error);
+                // Fallback si falla la API
+                document.getElementById('qr-image').src = `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(window.location.origin)}`;
+            }
+        }
+        
+        initConfig();
 
         const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);

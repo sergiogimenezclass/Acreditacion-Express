@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import List
 import datetime
 import json
+import socket
 
 # --- CONFIGURACIÓN DE BASE DE DATOS ---
 SQLALCHEMY_DATABASE_URL = "sqlite:///./leads.db"
@@ -48,11 +49,33 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+# --- UTILIDADES ---
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
+
 # --- APP FASTAPI ---
 app = FastAPI(title="Acreditación Express")
 
 # Servir archivos estáticos (HTML, JS, CSS)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/api/config")
+async def get_config(request: Request):
+    local_ip = get_local_ip()
+    port = request.url.port or 8000
+    host = request.url.hostname
+    if host in ["localhost", "127.0.0.1"]:
+        base_url = f"http://{local_ip}:{port}"
+    else:
+        base_url = str(request.base_url).rstrip("/")
+    return {"base_url": base_url}
 
 @app.get("/", response_class=HTMLResponse)
 async def read_index():
