@@ -95,7 +95,8 @@
 
         function showGreeting(name, course) {
             welcomeText.innerText = `¡Hola ${name}! 👋`;
-            courseText.innerText = `Interesado en: ${course}`;
+            const isPlural = course.includes(',');
+            courseText.innerText = `${isPlural ? 'Interesado/a en los cursos:' : 'Interesado/a en el curso:'} ${course}`;
 
             homeView.classList.add('opacity-0', 'scale-95');
             setTimeout(() => {
