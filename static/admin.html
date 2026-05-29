@@ -171,15 +171,31 @@
 
         function exportarCSV() {
             if (allLeads.length === 0) return alert('No hay datos');
-            const headers = ['ID', 'Nombre', 'Email', 'Telefono', 'CFP', 'Curso', 'Fecha'];
-            const rows = allLeads.map(l => [l.id, l.nombre, l.email, l.telefono, l.cfp, l.curso, l.fecha]);
-            let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
-            const encodedUri = encodeURI(csvContent);
+            
+            const headers = ['ID', 'Nombre', 'Email', 'Telefono', 'CFP', 'Cursos', 'Fecha'];
+            
+            // Preparar las filas escapando comas con comillas
+            const rows = allLeads.map(l => [
+                l.id,
+                `"${l.nombre}"`,
+                `"${l.email}"`,
+                `"${l.telefono || ''}"`,
+                `"${l.cfp}"`,
+                `"${l.curso}"`, // Los cursos ahora vienen separados por coma, las comillas son vitales aquí
+                `"${l.fecha}"`
+            ]);
+
+            // Crear contenido con BOM para que Excel reconozca UTF-8 (acentos)
+            const csvContent = "\uFEFF" + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            link.setAttribute("href", url);
             link.setAttribute("download", "leads_feria.csv");
             document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
