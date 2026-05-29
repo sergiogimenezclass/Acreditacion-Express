@@ -58,33 +58,10 @@
                 </div>
             </div>
 
-            <section class="mb-8">
-                <div class="flex items-center gap-2 mb-4">
-                    <i class="text-blue-600 w-5 h-5" data-lucide="map-pin"></i>
-                    <h2 class="text-xl font-bold text-gray-900">¿Qué CFP visitás?</h2>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <label class="cursor-pointer">
-                        <input type="radio" name="cfp" value="CFP N°11" class="hidden peer" required>
-                        <div class="p-4 bg-white border border-gray-200 rounded-xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all">
-                            <p class="font-bold text-gray-900">CFP N°11</p>
-                            <p class="text-xs text-gray-500">Pque. Patricios</p>
-                        </div>
-                    </label>
-                    <label class="cursor-pointer">
-                        <input type="radio" name="cfp" value="CFP N°27" class="hidden peer">
-                        <div class="p-4 bg-white border border-gray-200 rounded-xl text-center peer-checked:border-blue-600 peer-checked:bg-blue-50 transition-all">
-                            <p class="font-bold text-gray-900">CFP N°27</p>
-                            <p class="text-xs text-gray-500">CABA</p>
-                        </div>
-                    </label>
-                </div>
-            </section>
-
-            <section id="cursoSection" class="mb-8 hidden">
+            <section id="cursoSection" class="mb-8">
                 <div class="flex items-center gap-2 mb-4">
                     <i class="text-blue-600 w-5 h-5" data-lucide="book-open"></i>
-                    <h2 class="text-xl font-bold text-gray-900">Cursos de interés (Elegí uno o más)</h2>
+                    <h2 class="text-xl font-bold text-gray-900">Nuestros Cursos (Elegí uno o más)</h2>
                 </div>
                 <div class="space-y-2" id="courseList">
                     <!-- Dinámico -->
@@ -108,60 +85,72 @@
     <script>
         lucide.createIcons();
 
-        const cursosMap = {
-            "CFP N°11": ["Programación Web", "Diseño Web", "Diseño Gráfico", "Marketing Digital"],
-            "CFP N°27": ["Programación", "Programación con IA", "Productividad con IA", "Marketing Digital"]
-        };
+        const catalogoCursos = [
+            { nombre: "Programación Web", cfp: "CFP N°11" },
+            { nombre: "Diseño Web", cfp: "CFP N°11" },
+            { nombre: "Diseño Gráfico", cfp: "CFP N°11" },
+            { nombre: "Marketing Digital (11)", cfp: "CFP N°11" },
+            { nombre: "Programación", cfp: "CFP N°27" },
+            { nombre: "Programación con IA", cfp: "CFP N°27" },
+            { nombre: "Productividad con IA", cfp: "CFP N°27" },
+            { nombre: "Marketing Digital (27)", cfp: "CFP N°27" }
+        ];
 
         const form = document.getElementById('registroForm');
         const courseList = document.getElementById('courseList');
-        const cursoSection = document.getElementById('cursoSection');
         const mensajeExito = document.getElementById('mensajeExito');
 
-        document.querySelectorAll('input[name="cfp"]').forEach(input => {
-            input.addEventListener('change', (e) => {
-                const selectedCFP = e.target.value;
-                courseList.innerHTML = '';
-                
-                cursosMap[selectedCFP].forEach(curso => {
-                    const item = `
-                        <label class="flex items-center bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
-                            <input class="hidden peer" name="curso" type="checkbox" value="${curso}"/>
-                            <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mr-4">
-                                <i class="text-blue-600 w-6 h-6" data-lucide="star"></i>
-                            </div>
-                            <div class="flex-grow">
-                                <p class="font-bold text-gray-900">${curso}</p>
-                            </div>
-                            <div class="w-6 h-6 rounded-md border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-600 flex items-center justify-center transition-all">
-                                <i data-lucide="check" class="text-white w-4 h-4 opacity-0 peer-checked:opacity-100"></i>
-                            </div>
-                        </label>
-                    `;
-                    courseList.innerHTML += item;
-                });
-                
-                cursoSection.classList.remove('hidden');
-                lucide.createIcons();
+        // Renderizar catálogo completo
+        function renderCatalogo() {
+            courseList.innerHTML = '';
+            catalogoCursos.forEach((item, index) => {
+                const badgeColor = item.cfp === "CFP N°11" ? "bg-blue-50 text-blue-600" : "bg-indigo-50 text-indigo-600";
+                const row = `
+                    <label class="flex items-center bg-white border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm">
+                        <input class="hidden peer" name="curso_item" type="checkbox" value="${index}"/>
+                        <div class="w-10 h-10 rounded-lg ${badgeColor} flex items-center justify-center mr-4">
+                            <i class="w-6 h-6" data-lucide="star"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="font-bold text-gray-900">${item.nombre}</p>
+                            <span class="text-[10px] font-black uppercase tracking-tighter px-1.5 py-0.5 rounded ${badgeColor}">${item.cfp}</span>
+                        </div>
+                        <div class="w-6 h-6 rounded-md border-2 border-gray-200 peer-checked:border-blue-600 peer-checked:bg-blue-600 flex items-center justify-center transition-all">
+                            <i data-lucide="check" class="text-white w-4 h-4 opacity-0 peer-checked:opacity-100"></i>
+                        </div>
+                    </label>
+                `;
+                courseList.innerHTML += row;
             });
-        });
+            lucide.createIcons();
+        }
+
+        renderCatalogo();
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Validar que al menos un curso esté seleccionado
-            const selectedCourses = Array.from(form.querySelectorAll('input[name="curso"]:checked'));
-            if (selectedCourses.length === 0) {
+            const selectedIndices = Array.from(form.querySelectorAll('input[name="curso_item"]:checked')).map(i => parseInt(i.value));
+            if (selectedIndices.length === 0) {
                 alert('Por favor, seleccioná al menos un curso.');
                 return;
             }
 
-            const formData = new FormData(form);
+            const payload = new FormData();
+            payload.append('nombre', form.nombre.value);
+            payload.append('email', form.email.value);
+            payload.append('telefono', form.telefono.value);
+
+            const selectedCursos = selectedIndices.map(i => catalogoCursos[i]);
+            const uniqueCFPs = [...new Set(selectedCursos.map(c => c.cfp))];
             
+            payload.append('cfp', uniqueCFPs.join(', '));
+            selectedCursos.forEach(c => payload.append('curso', c.nombre));
+
             try {
                 const response = await fetch('/registro', {
                     method: 'POST',
-                    body: formData
+                    body: payload
                 });
                 
                 if (response.ok) {
